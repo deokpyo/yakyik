@@ -24,17 +24,16 @@ module.exports = {
 
     // post request
     create: function (params, callback) {
-        // validation
+        // validation - testing purpose before creating REACT
         // fix wrong data type (string with comma) given from user input
-        var zips = params['zipCodes'];
-        var zip = zips.split(',');
-        var newZips = [];
-        zip.forEach(function (zipCode) {
-            // get rid of possible spaces
-            newZips.push(zipCode.trim());
-        });
+        // var zips = params['zipCodes'];
+        // var zip = zips.split(',');
+        // var newZips = [];
+        // zip.forEach(function (zipCode) {
+        //     newZips.push(zipCode.trim()); // get rid of possible spaces
+        // });
 
-        params['zipCodes'] = newZips;
+        // params['zipCodes'] = newZips;
 
         Zone.create(params, function (err, zone) {
             if (err) {

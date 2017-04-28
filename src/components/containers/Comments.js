@@ -1,7 +1,7 @@
 import React from 'react';
-import superagent from 'superagent';
 import Comment from '../units/Comment';
-import style from './styles'
+import style from './styles';
+import { APIManager } from '../../utils';
 
 export default class Comments extends React.Component {
     constructor() {
@@ -10,34 +10,28 @@ export default class Comments extends React.Component {
             comment: {
                 username: '',
                 body: '',
-                timestamp: '',
             },
             list: []
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
+        //console.log('componentDidMount: ');
         // GET request
-        superagent
-        .get('/api/comment')
-        .query(null)
-        // type of data receiving
-        .set('Accept', 'application/json')
-        // call back
-        .end((err, response) => {
-            if(err){
-                alert('ERROR: ' + err);
+        APIManager.get('/api/comment', null, (err, response) => {
+            if (err) {
+                alert('ERROR:' + err.message);
                 return
             }
-            console.log(JSON.stringify(response.body));
-            let results = response.body.results;
+            //console.log(JSON.stringify(response));
+            let results = response.results;
             this.setState({
                 list: results
             })
         })
     }
 
-    updateUsername(event){
+    updateUsername(event) {
         //console.log('updatedUsername: ' + event.target.value);
         let updatedComment = Object.assign({}, this.state.comment);
         updatedComment['username'] = event.target.value;
@@ -46,7 +40,7 @@ export default class Comments extends React.Component {
         })
     }
 
-    updateBody(event){
+    updateBody(event) {
         //console.log('updatedBody: ' + event.target.value);
         let updatedComment = Object.assign({}, this.state.comment);
         updatedComment['body'] = event.target.value;
@@ -55,22 +49,22 @@ export default class Comments extends React.Component {
         })
     }
 
-    updateTimestamp(event){
-        //console.log('updatedTimestamp: ' + event.target.value);
+    submitComment() {
+        console.log('ADD COMMENT: ' + JSON.stringify(this.state.comment));
+        // take a string then convert into an array
         let updatedComment = Object.assign({}, this.state.comment);
-        updatedComment['timestamp'] = event.target.value;
-        this.setState({
-            comment: updatedComment
-        })
-
-    }
-
-    submitComment(){
-        console.log('submitComment' + JSON.stringify(this.state.comment));
-        let updatedList = Object.assign([], this.state.list);
-        updatedList.push(this.state.comment);
-        this.setState({
-            list: updatedList
+        console.log(updatedComment);
+        APIManager.post('/api/comment', updatedComment, (err, response) => {
+            if (err) {
+                alert('ERROR: ' + err.message);
+                return
+            }
+            console.log('COMMENT CREATED: ' + JSON.stringify(response));
+            let updatedList = Object.assign([], this.state.list);
+            updatedList.push(response.result);
+            this.setState({
+                list: updatedList
+            })
         })
     }
 
@@ -89,11 +83,9 @@ export default class Comments extends React.Component {
                         {commentList}
                     </ul>
                     <input onChange={this.updateUsername.bind(this)} className="form-control" type="text" placeholder="Username" />
-                    <br/>
+                    <br />
                     <textarea onChange={this.updateBody.bind(this)} className="form-control" placeholder="Comment" />
-                    <br/>
-                    <input onChange={this.updateTimestamp.bind(this)} className="form-control" type="text" placeholder="Timestamp" />
-                    <br/>
+                    <br />
                     <button onClick={this.submitComment.bind(this)} className="btn btn-info">Submit Comment</button>
                 </div>
             </div>

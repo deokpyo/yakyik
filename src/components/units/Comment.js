@@ -8,8 +8,6 @@ export default class Comment extends React.Component {
             <div>
                 <p style={styles.body}>{this.props.currentComment.body}</p>
                 <span style={styles.username}>{this.props.currentComment.username}</span>
-                <span style={styles.break}>|</span>
-                <span>{this.props.currentComment.timestamp}</span>
                 <hr/>
             </div>
         )
